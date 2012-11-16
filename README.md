@@ -7,5 +7,5 @@ La aplicación se ha probado solamente en el simulador iPhone de Corona SDK (320
 
 Gabriel Casarini
 
-![Pantallazo 1](https://github.com/97bytes/TicTacToe_Corona/blob/master/screenshot1.png)
-![Pantallazo 2](https://github.com/97bytes/TicTacToe_Corona/blob/master/screenshot2.png)
+[Pantallazo 1](https://github.com/97bytes/TicTacToe_Corona/blob/master/screenshot1.png)
+[Pantallazo 2](https://github.com/97bytes/TicTacToe_Corona/blob/master/screenshot2.png)
