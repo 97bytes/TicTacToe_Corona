@@ -13,14 +13,14 @@ math.randomseed( seed )
 -- DECLARACIONES
 -- **************
 
-local board = {0,0,0,0,0,0,0,0,0} -- Estado del tablero
+local board = {0,0,0,0,0,0,0,0,0}   -- Estado del tablero
 local computerPlayerId = 1
 local userPlayerId = 2
 local turnPlayerId = userPlayerId   -- Guarda el ID del jugador que tiene el turno de juego
 
-boardX = 10
+boardX = 10         -- Origen de coordenadas para posicionar las fichas
 boardY = 150
-cellImages = {} -- imagénes de las fichas del tablero
+cellImages = {}     -- imagénes de las fichas del tablero
 statusMessage = nil -- Mensaje que se muestra en la parte superior
 
 -- *******************
@@ -39,7 +39,6 @@ local onCellTouchListener = function( event )
 	return true
 end
 
---
 --
 -- Este handler es invocado cuando el usuario pulsa el botón del juego
 -- para comenzar, reiniciar o volver a jugar
@@ -79,7 +78,7 @@ end
 -- ****************************
 
 -- 
--- Reinicializar el estado del juego
+-- Reinicializa el estado del juego.
 -- Notar que debemos ocultar el grupo de las notas, aunque sea necesario hacerlo la primera vez! 
 -- Otra forma mejor, sin usar un flag?
 --
@@ -107,7 +106,7 @@ end
 -- llega en una tabla (!!!). Las celdas vacías se registran para recibir eventos
 -- cuando el usuario las toca.
 -- Notar que debemos retornar una tabla con las imágenes, para que luego puedan
--- eliminarse. Una forma mejor?
+-- eliminarse. Una forma mejor de hacerlo?
 --
 function displayBoard(boardState)
 	local images = {}
@@ -154,10 +153,10 @@ function cloneBoard(boardState)
 end
 
 --
--- Comprueba si un jugador ha ganado la partida. Recibe el ID del jugador y el estado del tablero
--- Retorna una tabla con 3 elementos: {isWinner=true, cells={celda1, celda2, celda3}
+-- Comprueba si un jugador ha ganado la partida. Recibe el ID del jugador y el estado del tablero.
+-- Retorna una tabla con 3 elementos: {isWinner=..., cells={...}}
 --   isWinner: vale true si el jugador ha ganado; false en caso contrario
---   cells: una tabla con los índices de las celdas que forma la línea ganadora, o {} si no es ganador
+--   cells: índices de las celdas que forma la línea ganadora, o {} si el jugador no es ganador
 --
 function checkIsWinner(playerId, boardState)
 	-- comprobar líneas horizontales
@@ -188,7 +187,7 @@ end
 --    isOver: vale true si el juego ha terminado
 --    playerId: si hay una ganador, es el ID del jugador. Si es empate, vale 0
 --    cells: una tabla con las celdas que forman la línea ganadora
--- Notar que el juego puede terminar con un ganador o bien, con empate. Por ello, hay que analizar
+-- Notar que el juego puede terminar con un ganador o en empate (ninguno gana). Por ello hay que analizar
 -- si el otro jugador todavía tiene posibilidades de ganar.
 --
 function checkGameOver(boardState, currentPlayerId, opponentPlayerId)
@@ -220,9 +219,8 @@ function checkGameOver(boardState, currentPlayerId, opponentPlayerId)
 end
 
 --
--- Esta función gestiona los turnos entre los 2 jugadores y controla si el 
--- juego ha terminado.
--- Notar que usamos un timer para introducir una espera cuando juega el ordenador
+-- Esta función gestiona los turnos entre los 2 jugadores y controla si el juego ha terminado.
+-- Notar que usamos un 'timer' para introducir una espera cuando juega el ordenador
 -- Otra forma mejor de hacer esto?
 --
 function nextTurn()
@@ -249,12 +247,12 @@ function nextTurn()
 end
 
 --
--- El juego ha terminado y hay que actualizar el mensaje y provocar el efecto
--- de tiemblor en las celdas  que forman la línea ganadora.
+-- El juego ha terminado y hay que actualizar el mensaje y provocar el efecto de temblor (shake) en 
+-- las celdas que forman la línea ganadora.
 -- En 'params' están todos los valores necesarios:
 --    playerId: es el ID del jugador que ganó o 0 si es empate
---    cells: una tabla con los índices de las celdas que forma la línea ganadora
--- Notar que las imágenes tiemblan de forma diferente para cada jugador: la X se mueve menos que la O
+--    cells: los índices de las celdas que forma la línea ganadora
+-- Nótese que las imágenes tiemblan de forma diferente para cada jugador: la X se mueve menos que la O
 function gameOver(params)
 	turnPlayerId = -1
 	local winnerId = params.playerId
@@ -284,9 +282,8 @@ end
 -- ***********************************
 
 --
--- Es el turno del ordenador. Elegimos la celda para mover analizando las posibilidades
--- de ganar proyectando líneas sobre el tablero.
--- El algoritmo consiste en:
+-- Es el turno del ordenador. Elegimos la celda analizando las posibilidades de ganar proyectando 
+-- líneas sobre el tablero. El algoritmo consiste en:
 --   1) Calcular la cantidad de pasos requeridos para formar cada línea y además, si podemos
 --      bloquear al oponente.
 --   2) Se ordenan los valores anteriores y se obtiene la celda correspondiente.
@@ -356,7 +353,8 @@ end
 
 -- 
 -- Esta estrategia analiza si es posible formar una línea diagonal. 
--- Si es así, retorna la celda que debería elegirse. Si no, retorna un movimiento inválido.
+-- Si es así, retorna la celda que debería elegirse y el peso es la cantidad de pasos para
+-- formar la línea. Si no, retorna un movimiento inválido.
 --   --X
 --   -X-
 --   X--
@@ -367,7 +365,8 @@ end
 
 -- 
 -- Esta estrategia analiza si es posible formar una línea diagonal. 
--- Si es así, retorna la celda que debería elegirse. Si no, retorna un movimiento inválido.
+-- Si es así, retorna la celda que debería elegirse y el peso es la cantidad de pasos para
+-- formar la línea. Si no, retorna un movimiento inválido.
 --   X--
 --   -X-
 --   --X
@@ -378,7 +377,8 @@ end
 
 -- 
 -- Esta estrategia analiza si es posible formar una línea vertical. 
--- Si es así, retorna la celda que debería elegirse. Si no, retorna un movimiento inválido.
+-- Si es así, retorna la celda que debería elegirse y el peso es la cantidad de pasos para
+-- formar la línea. Si no, retorna un movimiento inválido.
 --   -X-
 --   -X-
 --   -X-
@@ -389,7 +389,8 @@ end
 
 -- 
 -- Esta estrategia analiza si es posible formar una línea horizontal. 
--- Si es así, retorna la celda que debería elegirse. Si no, retorna un movimiento inválido.
+-- Si es así, retorna la celda que debería elegirse y el peso es la cantidad de pasos para
+-- formar la línea. Si no, retorna un movimiento inválido.
 --   ---
 --   XXX
 --   ---
@@ -429,6 +430,7 @@ end
 
 --
 -- Inicializar la pantalla
+-- Existe una manera mejor de escribir esto?
 --
 function initDisplay()
 	background = display.newImage("background.jpg", 0, 0)
